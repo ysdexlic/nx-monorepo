@@ -1,0 +1,19 @@
+{
+  "name": "nx-monorepo",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {
+    "start": "nx serve",
+    "build": "nx build",
+    "test": "nx test"
+  },
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "@nrwl/cli": "13.8.1",
+    "@nrwl/tao": "13.8.1",
+    "@nrwl/workspace": "13.8.1",
+    "@nxrs/cargo": "^0.3.2",
+    "typescript": "~4.5.2"
+  }
+}

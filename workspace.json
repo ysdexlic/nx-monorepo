@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "projects": {
+    "test_app": "apps/test-app",
+    "test_lib": "libs/test-lib"
+  }
+}
