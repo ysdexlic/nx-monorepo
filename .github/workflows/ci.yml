@@ -6,62 +6,49 @@ on:
       - main
   pull_request:
 
-env:
-  NX_CLOUD_DISTRIBUTED_EXECUTION: true
-
 jobs:
-  main:
+  install-deps:
     runs-on: ubuntu-latest
-    name: Main
-    if: ${{ github.event_name != 'pull_request' }}
     steps:
       - uses: actions/checkout@v2
-        name: Checkout [main]
+
+      - name: Cache node modules
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+
+      - name: Yarn Install
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
+
+  build-and-test:
+    runs-on: ubuntu-latest
+    name: Build and Test
+    needs: install-deps
+    steps:
+      - name: Checkout [main]
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0
+
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+
+      - name: Cache Nx
+        uses: actions/cache@v2
+        with:
+          path: node_modules/.cache/nx
+          key: cache-nx-${{ hashFiles('yarn.lock') }}-${{ github.sha }}
+          restore-keys: |
+            cache-nx-${{ hashFiles('yarn.lock') }}-
+
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: "14"
-      - run: yarn
-      - run: npx nx-cloud start-ci-run
-      - run: npx nx affected --target=build --parallel --max-parallel=3
-      - run: npx nx affected --target=test --parallel --max-parallel=2
-      - run: npx nx-cloud stop-all-agents
 
-  pr:
-    runs-on: ubuntu-latest
-    name: PR
-    if: ${{ github.event_name == 'pull_request' }}
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          fetch-depth: 0
-      - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: "14"
-      - run: yarn
-      - run: npx nx-cloud start-ci-run
-      - run: npx nx affected --target=build --parallel --max-parallel=3
-      - run: npx nx affected --target=test --parallel --max-parallel=2
-      - run: npx nx-cloud stop-all-agents
-
-  agents:
-    runs-on: ubuntu-latest
-    name: Agents
-    timeout-minutes: 60
-    strategy:
-      matrix:
-        agent: [1, 2, 3]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: "14"
-      - run: yarn
-      - name: Start Nx Agent ${{ matrix.agent }}
-        run: npx nx-cloud start-agent
+      - run: yarn nx affected --target=build --parallel --max-parallel=3
+      - run: yarn nx affected --target=test --parallel --max-parallel=2
