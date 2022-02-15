@@ -1,5 +1,5 @@
 pub fn test_lib() -> String {
-  "test_lib".into()
+  "Hello World".into()
 }
 
 #[cfg(test)]
@@ -8,6 +8,6 @@ mod tests {
 
   #[test]
   fn it_works() {
-    assert_eq!(test_lib(), "test_lib".to_string());
+    assert_eq!(test_lib(), "Hello World".to_string());
   }
 }
