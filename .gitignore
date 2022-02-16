@@ -1,13 +1,16 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
-# compiled output
+# Compiled Output
 /dist
 /tmp
 /out-tsc
 /target
 
-# dependencies
+# Dependencies
 /node_modules
+
+# Environment Variables
+nx-cloud.env
 
 # IDEs and editors
 /.idea
