@@ -1,6 +1,7 @@
 [workspace]
 
 members = [
+  "libs/test-lib-2",
   "libs/test-lib",
   "apps/test-app",
 ]

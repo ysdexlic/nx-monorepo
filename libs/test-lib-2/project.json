@@ -1,0 +1,20 @@
+{
+  "root": "libs/test-lib-2",
+  "projectType": "library",
+  "sourceRoot": "libs/test-lib-2/src",
+  "targets": {
+    "test": {
+      "executor": "@nxrs/cargo:test",
+      "options": {}
+    },
+    "lint": {
+      "executor": "@nxrs/cargo:clippy",
+      "options": {
+        "fix": false,
+        "failOnWarnings": true,
+        "noDeps": true
+      }
+    }
+  },
+  "tags": []
+}
